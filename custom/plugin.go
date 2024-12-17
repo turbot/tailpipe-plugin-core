@@ -62,21 +62,23 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*schem
 
 	var collector table.Collector
 
-	switch req.CustomTable.SourceFormat.Target {
+	switch req.SourceFormat.Target {
 	case constants.SourceFormatCustom:
 		slog.Info("Custom source format")
-		collector = &table.CollectorImpl[*table.DynamicRow, *tables.LogTableConfig]{
-			Table: &tables.LogTable{
-				Name: req.CustomTable.Name,
+		collector = &table.CollectorWithFormat[*table.DynamicRow, *formats.Custom]{
+			CollectorImpl: table.CollectorImpl[*table.DynamicRow]{
+				Table: &tables.LogTable{
+					Name: req.CustomTable.Name,
+				},
 			},
 		}
 	case constants.SourceFormatDelimited:
 		slog.Info("Delimited source format")
-		collector = table.NewArtifactConversionCollector[*formats.Delimited](req.CustomTable.Name, req.CustomTable.SourceFormat)
+		collector = table.NewArtifactConversionCollector[*formats.Delimited](req.CustomTable.Name, req.SourceFormat)
 	//case constants.SourceFormatJsonLines:
 	//case constants.SourceFormatJson:
 	default:
-		return nil, fmt.Errorf("unsupported source format: %s", req.CustomTable.SourceFormat.Target)
+		return nil, fmt.Errorf("unsupported source format: %s", req.SourceFormat.Target)
 	}
 
 	// now we have a collector we can register it with the table factory
@@ -98,7 +100,7 @@ func (p *Plugin) validateRequest(req *proto.CollectRequest) error {
 	if req.CustomTable.Name == "" {
 		return fmt.Errorf("custom table name is required")
 	}
-	if req.CustomTable.SourceFormat == nil {
+	if req.SourceFormat == nil {
 		return fmt.Errorf("source format is required")
 	}
 	return nil

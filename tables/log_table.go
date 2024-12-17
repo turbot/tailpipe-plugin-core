@@ -1,6 +1,7 @@
 package tables
 
 import (
+	"github.com/turbot/tailpipe-plugin-custom/formats"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
 	"github.com/turbot/tailpipe-plugin-sdk/enrichment"
@@ -9,15 +10,17 @@ import (
 )
 
 type LogTable struct {
+	table.TableWithFormatImpl[*formats.Custom]
 	Name string
 }
 
-func (c *LogTable) GetSourceMetadata(config *LogTableConfig) []*table.SourceMetadata[*table.DynamicRow] {
+func (c *LogTable) GetSourceMetadata() []*table.SourceMetadata[*table.DynamicRow] {
 	return []*table.SourceMetadata[*table.DynamicRow]{
 		{
 			// any artifact source
 			SourceName: constants.ArtifactSourceIdentifier,
-			Mapper:     table.NewRowPatternMapper[*table.DynamicRow](config.LogFormat),
+			// format should have been set for us
+			Mapper: table.NewRowPatternMapper[*table.DynamicRow](c.Format.Pattern),
 			Options: []row_source.RowSourceOption{
 				artifact_source.WithRowPerLine(),
 			},
@@ -29,8 +32,8 @@ func (c *LogTable) Identifier() string {
 	return c.Name
 }
 
-func (c *LogTable) EnrichRow(row *table.DynamicRow, config *LogTableConfig, sourceEnrichmentFields enrichment.SourceEnrichment) (*table.DynamicRow, error) {
-	// tell the row to enrich itself using any mappings specified in the config
-	row.Enrich(config.Mappings, sourceEnrichmentFields.CommonFields)
+func (c *LogTable) EnrichRow(row *table.DynamicRow, sourceEnrichmentFields enrichment.SourceEnrichment) (*table.DynamicRow, error) {
+	// tell the row to enrich itself using any mappings specified in the source format
+	row.Enrich(sourceEnrichmentFields.CommonFields)
 	return row, nil
 }
