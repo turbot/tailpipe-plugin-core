@@ -5,6 +5,7 @@ import (
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
 	"github.com/turbot/tailpipe-plugin-sdk/enrichment"
+	"github.com/turbot/tailpipe-plugin-sdk/mappers"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
 )
@@ -20,7 +21,7 @@ func (c *LogTable) GetSourceMetadata() []*table.SourceMetadata[*table.DynamicRow
 			// any artifact source
 			SourceName: constants.ArtifactSourceIdentifier,
 			// format should have been set for us
-			Mapper: table.NewRowPatternMapper[*table.DynamicRow](c.Format.Pattern),
+			Mapper: mappers.NewGonxMapper[*table.DynamicRow](c.Format.Pattern),
 			Options: []row_source.RowSourceOption{
 				artifact_source.WithRowPerLine(),
 			},
