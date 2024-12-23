@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
-	"github.com/turbot/tailpipe-plugin-sdk/artifact_source_config"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/types"
@@ -16,16 +15,16 @@ import (
 
 // register the source from the package init function
 func init() {
-	row_source.RegisterRowSource[*FileSystemSource]()
+	row_source.RegisterRowSource[*FileSource]()
 }
 
-type FileSystemSource struct {
-	artifact_source.ArtifactSourceImpl[*artifact_source_config.FileSystemSourceConfig, *artifact_source.EmptyConnection]
+type FileSource struct {
+	artifact_source.ArtifactSourceImpl[*FileSourceConfig, *artifact_source.EmptyConnection]
 	Paths      []string
 	Extensions types.ExtensionLookup
 }
 
-func (s *FileSystemSource) Init(ctx context.Context, configData, connectionData types.ConfigData, opts ...row_source.RowSourceOption) error {
+func (s *FileSource) Init(ctx context.Context, configData, connectionData types.ConfigData, opts ...row_source.RowSourceOption) error {
 	// call base to parse config and apply options
 	if err := s.ArtifactSourceImpl.Init(ctx, configData, connectionData, opts...); err != nil {
 		return err
@@ -33,15 +32,15 @@ func (s *FileSystemSource) Init(ctx context.Context, configData, connectionData 
 
 	s.Paths = s.Config.Paths
 	s.Extensions = types.NewExtensionLookup(s.Config.Extensions)
-	slog.Info("Initialized FileSystemSource", "paths", s.Paths, "extensions", s.Extensions)
+	slog.Info("Initialized FileSource", "paths", s.Paths, "extensions", s.Extensions)
 	return nil
 }
 
-func (s *FileSystemSource) Identifier() string {
-	return artifact_source_config.FileSystemSourceIdentifier
+func (s *FileSource) Identifier() string {
+	return FileSourceIdentifier
 }
 
-func (s *FileSystemSource) DiscoverArtifacts(ctx context.Context) error {
+func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 	var errList []error
 	for _, path := range s.Paths {
 		err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
@@ -58,7 +57,7 @@ func (s *FileSystemSource) DiscoverArtifacts(ctx context.Context) error {
 				// - in this case the source location
 				sourceEnrichment := &schema.SourceEnrichment{
 					CommonFields: schema.CommonFields{
-						TpSourceType:     artifact_source_config.FileSystemSourceIdentifier,
+						TpSourceType:     FileSourceIdentifier,
 						TpSourceLocation: &path,
 					},
 				}
@@ -80,7 +79,7 @@ func (s *FileSystemSource) DiscoverArtifacts(ctx context.Context) error {
 	return nil
 }
 
-func (s *FileSystemSource) DownloadArtifact(ctx context.Context, info *types.ArtifactInfo) error {
+func (s *FileSource) DownloadArtifact(ctx context.Context, info *types.ArtifactInfo) error {
 
 	// TODO consider large/remote files/download progress https://github.com/turbot/tailpipe-plugin-sdk/issues/10
 	//s.NotifyObservers(events.NewArtifactDownloadProgress(request, info))
