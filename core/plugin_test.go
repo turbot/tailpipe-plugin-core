@@ -1,4 +1,4 @@
-package custom
+package core
 
 import (
 	"testing"

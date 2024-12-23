@@ -1,11 +1,11 @@
-package custom
+package core
 
 import (
 	"context"
 	"fmt"
 	"github.com/turbot/go-kit/helpers"
-	"github.com/turbot/tailpipe-plugin-custom/formats"
-	"github.com/turbot/tailpipe-plugin-custom/tables"
+	"github.com/turbot/tailpipe-plugin-core/formats"
+	"github.com/turbot/tailpipe-plugin-core/tables"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
 	"github.com/turbot/tailpipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/tailpipe-plugin-sdk/plugin"
@@ -14,7 +14,7 @@ import (
 	"log/slog"
 
 	// reference the table package to ensure that the tables are registered by the init functions
-	_ "github.com/turbot/tailpipe-plugin-custom/tables"
+	_ "github.com/turbot/tailpipe-plugin-core/tables"
 )
 
 const PluginName = "dynamic"

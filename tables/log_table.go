@@ -1,7 +1,7 @@
 package tables
 
 import (
-	"github.com/turbot/tailpipe-plugin-custom/formats"
+	"github.com/turbot/tailpipe-plugin-core/formats"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
 	"github.com/turbot/tailpipe-plugin-sdk/mappers"

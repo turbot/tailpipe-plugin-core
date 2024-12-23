@@ -1,4 +1,4 @@
-module github.com/turbot/tailpipe-plugin-custom
+module github.com/turbot/tailpipe-plugin-core
 
 go 1.23.1
 
