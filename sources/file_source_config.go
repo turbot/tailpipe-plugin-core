@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	FileSourceIdentifier = "file_system"
+	FileSourceIdentifier = "file"
 )
 
 type FileSourceConfig struct {
