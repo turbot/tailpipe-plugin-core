@@ -9,7 +9,10 @@ replace github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
 replace github.com/turbot/pipe-fittings => ../pipe-fittings
 
 require (
+	github.com/elastic/go-grok v0.3.1
+	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/turbot/go-kit v0.10.0-rc.0
+	github.com/turbot/pipe-fittings v1.4.1
 	github.com/turbot/tailpipe-plugin-sdk v0.0.0
 )
 
@@ -51,7 +54,6 @@ require (
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-	github.com/elastic/go-grok v0.3.1 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
@@ -83,7 +85,6 @@ require (
 	github.com/hashicorp/go-uuid v1.0.3 // indirect
 	github.com/hashicorp/go-version v1.7.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
-	github.com/hashicorp/hcl/v2 v2.20.1 // indirect
 	github.com/hashicorp/terraform-registry-address v0.2.1 // indirect
 	github.com/hashicorp/terraform-svchost v0.1.1 // indirect
 	github.com/hashicorp/yamux v0.1.1 // indirect
@@ -143,7 +144,6 @@ require (
 	github.com/tklauser/go-sysconf v0.3.9 // indirect
 	github.com/tklauser/numcpus v0.3.0 // indirect
 	github.com/tkrajina/go-reflector v0.5.6 // indirect
-	github.com/turbot/pipe-fittings v1.4.1 // indirect
 	github.com/turbot/pipes-sdk-go v0.9.1 // indirect
 	github.com/turbot/steampipe-plugin-code v0.7.0 // indirect
 	github.com/turbot/steampipe-plugin-sdk/v5 v5.8.0 // indirect

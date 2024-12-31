@@ -39,6 +39,8 @@ func (s *FileSource) Identifier() string {
 }
 
 func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
+	// TODO KAI BAD SOURCE CONFIG GIVES NO ERROR
+
 	// if we have a layout, check whether this is a directory we should descend into
 	layout := s.Config.GetFileLayout()
 	filterMap := s.Config.FilterMap
