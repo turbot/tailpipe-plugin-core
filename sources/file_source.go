@@ -59,7 +59,7 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 			}
 
 			// if we have a layout, check whether this path satisfies the layout and filters
-			var metadata map[string][]byte
+			var metadata map[string]string
 			var satisfied = true
 			if layout != nil {
 				// if we are a directory and we are not satisfied, skip the directory by returning fs.SkipDir
@@ -120,7 +120,7 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 
 // get the metadata from the given file path, based on the file layout
 // returns whether the path matches the layout pattern, and the medata map
-func (s *FileSource) getPathMetadata(g *grok.Grok, basePath, targetPath string, layout *string, isDir bool) (bool, map[string][]byte, error) {
+func (s *FileSource) getPathMetadata(g *grok.Grok, basePath, targetPath string, layout *string, isDir bool) (bool, map[string]string, error) {
 	if layout == nil {
 		return false, nil, nil
 	}
@@ -142,7 +142,16 @@ func (s *FileSource) getPathMetadata(g *grok.Grok, basePath, targetPath string, 
 		return false, nil, err
 	}
 
-	return match, metadata, nil
+	// convert the metadata to a string map
+	return match, ByteMapToStringMap(metadata), nil
+}
+
+func ByteMapToStringMap(m map[string][]byte) map[string]string {
+	res := make(map[string]string, len(m))
+	for k, v := range m {
+		res[k] = string(v)
+	}
+	return res
 }
 
 // DownloadArtifact does nothing as the artifact already exists on the local file system
