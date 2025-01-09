@@ -13,7 +13,8 @@ import (
 	"github.com/turbot/tailpipe-plugin-sdk/table"
 	"log/slog"
 
-	// reference the table package to ensure that the tables are registered by the init functions
+	// reference the table and sources packages to ensure that the tables and sources are registered by the init functions
+	_ "github.com/turbot/tailpipe-plugin-core/sources"
 	_ "github.com/turbot/tailpipe-plugin-core/tables"
 )
 
@@ -39,7 +40,7 @@ func NewPlugin() (_ plugin.TailpipePlugin, err error) {
 }
 
 // Init Override the Init method in PluginImpl to do nothing
-// (we will initialise the table factory in the Collect method, after reggistering the collector for the custom table)
+// (we will initialise the table factory in the Collect method, after registering the collector for the custom table)
 func (p *Plugin) Init(context.Context) error {
 	return nil
 }
