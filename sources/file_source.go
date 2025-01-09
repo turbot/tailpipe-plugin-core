@@ -21,12 +21,13 @@ func init() {
 
 type FileSource struct {
 	artifact_source.ArtifactSourceImpl[*FileSourceConfig, *artifact_source.EmptyConnection]
+
 	Paths []string
 }
 
-func (s *FileSource) Init(ctx context.Context, configData, connectionData types.ConfigData, opts ...row_source.RowSourceOption) error {
+func (s *FileSource) Init(ctx context.Context, params row_source.RowSourceParams, opts ...row_source.RowSourceOption) error {
 	// call base to parse config and apply options
-	if err := s.ArtifactSourceImpl.Init(ctx, configData, connectionData, opts...); err != nil {
+	if err := s.ArtifactSourceImpl.Init(ctx, params, opts...); err != nil {
 		return err
 	}
 
@@ -57,55 +58,7 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 			if err != nil {
 				return err
 			}
-
-			// if we have a layout, check whether this path satisfies the layout and filters
-			var metadata map[string]string
-			var satisfied = true
-			if layout != nil {
-				// if we are a directory and we are not satisfied, skip the directory by returning fs.SkipDir
-				match, metadata, err := s.getPathMetadata(g, basePath, targetPath, layout, d.IsDir())
-				if err != nil {
-					return err
-				}
-
-				// check if the path matches the layout and if so, are filters satisfied
-				satisfied = match && artifact_source.MetadataSatisfiesFilters(metadata, filterMap)
-			}
-
-			if d.IsDir() {
-				// if this is a directory and the pattern is satisfied, descend into the directory
-				// (we return nil to continue processing the directory)
-				if satisfied {
-					return nil
-				} else {
-					return fs.SkipDir
-				}
-			}
-
-			// so this is a file
-			//if the pattern is not satisfied, skip the file
-			if !satisfied {
-				return nil
-			}
-
-			// get the full path
-			absLocation, err := filepath.Abs(targetPath)
-			if err != nil {
-				return err
-			}
-			// populate enrichment fields the source is aware of
-			// - in this case the source location
-			sourceEnrichment := &schema.SourceEnrichment{
-				CommonFields: schema.CommonFields{
-					TpSourceType:     FileSourceIdentifier,
-					TpSourceLocation: &absLocation,
-				},
-				Metadata: metadata,
-			}
-
-			artifactInfo := &types.ArtifactInfo{Name: targetPath, SourceEnrichment: sourceEnrichment}
-			// notify observers of the discovered artifact
-			return s.OnArtifactDiscovered(ctx, artifactInfo)
+			return s.WalkNode(ctx, targetPath, basePath, layout, d.IsDir(), g, filterMap)
 		})
 		if err != nil {
 			errList = append(errList, err)
@@ -157,7 +110,7 @@ func ByteMapToStringMap(m map[string][]byte) map[string]string {
 // DownloadArtifact does nothing as the artifact already exists on the local file system
 func (s *FileSource) DownloadArtifact(ctx context.Context, info *types.ArtifactInfo) error {
 	// notify observers of the discovered artifact
-	// NOTE: for now just pass on the info as is
+	// NOTE: just pass on the info as is
 	// if the file was downloaded we would update the Name to the local path, leaving OriginalName as the source path
 	// TODO CREATE collection state data https://github.com/turbot/tailpipe-plugin-sdk/issues/11
 	return s.OnArtifactDownloaded(ctx, info)
