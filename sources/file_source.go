@@ -31,7 +31,14 @@ func (s *FileSource) Init(ctx context.Context, params row_source.RowSourceParams
 		return err
 	}
 
-	s.Paths = s.Config.Paths
+	for _, p := range s.Config.Paths {
+		abs, err := filepath.Abs(p)
+		if err != nil {
+			return fmt.Errorf("error getting absolute path for %s: %v", p, err)
+		}
+		s.Paths = append(s.Paths, abs)
+	}
+
 	return nil
 }
 
