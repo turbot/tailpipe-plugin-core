@@ -18,7 +18,7 @@ import (
 	_ "github.com/turbot/tailpipe-plugin-core/tables"
 )
 
-const PluginName = "dynamic"
+const PluginName = "custom"
 
 type Plugin struct {
 	plugin.PluginImpl

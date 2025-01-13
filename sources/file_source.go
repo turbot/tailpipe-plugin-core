@@ -4,14 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/fs"
-	"path/filepath"
-
 	"github.com/elastic/go-grok"
+	"github.com/turbot/pipe-fittings/filter"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/types"
+	"io/fs"
+	"path/filepath"
 )
 
 // register the source from the package init function
@@ -51,7 +51,9 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 
 	// if we have a layout, check whether this is a directory we should descend into
 	layout := s.Config.GetFileLayout()
-	filterMap := s.Config.FilterMap
+
+	var filterMap = make(map[string]*filter.SqlFilter)
+
 	g := grok.New()
 	// add any patterns defined in config
 	err := g.AddPatterns(s.Config.GetPatterns())
@@ -116,9 +118,47 @@ func ByteMapToStringMap(m map[string][]byte) map[string]string {
 
 // DownloadArtifact does nothing as the artifact already exists on the local file system
 func (s *FileSource) DownloadArtifact(ctx context.Context, info *types.ArtifactInfo) error {
+	// TODO JUST SET LOCAL NAME???? We need to review usage first
 	// notify observers of the discovered artifact
 	// NOTE: just pass on the info as is
 	// if the file was downloaded we would update the Name to the local path, leaving OriginalName as the source path
 	// TODO CREATE collection state data https://github.com/turbot/tailpipe-plugin-sdk/issues/11
 	return s.OnArtifactDownloaded(ctx, info)
 }
+
+//func (s *FileSource) getFilterMap(granularity time.Duration) (map[string]*filter.SqlFilter, error) {
+//	// If FromTime is zero, return an empty filter map
+//	if s.FromTime.IsZero() {
+//		return make(map[string]*filter.SqlFilter), nil
+//	}
+//
+//	// Initialize the filters slice
+//	filters := []string{
+//		fmt.Sprintf("year > %d", s.FromTime.Year()),
+//	}
+//
+//	// Add filters based on granularity
+//	if granularity <= time.Hour*24*30 {
+//		filters = append(filters, fmt.Sprintf("month > %d", int(s.FromTime.Month())))
+//	}
+//	if granularity <= time.Hour*24 {
+//		filters = append(filters, fmt.Sprintf("day > %d", s.FromTime.Day()))
+//	}
+//	if granularity <= time.Hour {
+//		filters = append(filters, fmt.Sprintf("hour > %d", s.FromTime.Hour()))
+//	}
+//	if granularity <= time.Minute {
+//		filters = append(filters, fmt.Sprintf("minute > %d", s.FromTime.Minute()))
+//	}
+//	if granularity <= time.Second {
+//		filters = append(filters, fmt.Sprintf("second > %d", s.FromTime.Second()))
+//	}
+//
+//	// Build the filter map
+//	filterMap, err := helpers.BuildFilterMap(filters)
+//	if err != nil {
+//		return nil, fmt.Errorf("failed to build filter map: %w", err)
+//	}
+//
+//	return filterMap, nil
+//}
