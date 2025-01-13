@@ -12,7 +12,7 @@ const (
 )
 
 type FileSourceConfig struct {
-	artifact_source_config.ArtifactSourceConfigBase
+	artifact_source_config.ArtifactSourceConfigImpl
 	// required to allow partial decoding
 	Remain hcl.Body `hcl:",remain" json:"-"`
 
@@ -21,7 +21,7 @@ type FileSourceConfig struct {
 
 func (f *FileSourceConfig) Validate() error {
 	// validate the base fields
-	if err := f.ArtifactSourceConfigBase.Validate(); err != nil {
+	if err := f.ArtifactSourceConfigImpl.Validate(); err != nil {
 		return err
 	}
 
