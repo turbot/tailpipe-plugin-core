@@ -25,7 +25,7 @@ type FileSource struct {
 	Paths []string
 }
 
-func (s *FileSource) Init(ctx context.Context, params row_source.RowSourceParams, opts ...row_source.RowSourceOption) error {
+func (s *FileSource) Init(ctx context.Context, params *row_source.RowSourceParams, opts ...row_source.RowSourceOption) error {
 	// call base to parse config and apply options
 	if err := s.ArtifactSourceImpl.Init(ctx, params, opts...); err != nil {
 		return err
