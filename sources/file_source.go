@@ -8,7 +8,6 @@ import (
 	"github.com/turbot/pipe-fittings/filter"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
-	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/types"
 	"io/fs"
 	"path/filepath"
@@ -80,48 +79,10 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 	return nil
 }
 
-// get the metadata from the given file path, based on the file layout
-// returns whether the path matches the layout pattern, and the medata map
-func (s *FileSource) getPathMetadata(g *grok.Grok, basePath, targetPath string, layout *string, isDir bool) (bool, map[string]string, error) {
-	if layout == nil {
-		return false, nil, nil
-	}
-	// remove the base path from the path
-	relPath, err := filepath.Rel(basePath, targetPath)
-	if err != nil {
-		return false, nil, err
-	}
-	var metadata map[string][]byte
-	var match bool
-	// if this is a directory, we just want to evaluate the pattern segments up to this directory
-	// so call GetPathSegmentMetadata which trims the pattern to match the path length
-	if isDir {
-		match, metadata, err = artifact_source.GetPathSegmentMetadata(g, relPath, *layout)
-	} else {
-		match, metadata, err = artifact_source.GetPathMetadata(g, relPath, *layout)
-	}
-	if err != nil {
-		return false, nil, err
-	}
-
-	// convert the metadata to a string map
-	return match, ByteMapToStringMap(metadata), nil
-}
-
-func ByteMapToStringMap(m map[string][]byte) map[string]string {
-	res := make(map[string]string, len(m))
-	for k, v := range m {
-		res[k] = string(v)
-	}
-	return res
-}
-
 // DownloadArtifact does nothing as the artifact already exists on the local file system
 func (s *FileSource) DownloadArtifact(ctx context.Context, info *types.ArtifactInfo) error {
-	// TODO JUST SET LOCAL NAME???? We need to review usage first
 	// notify observers of the discovered artifact
 	// NOTE: just pass on the info as is
 	// if the file was downloaded we would update the Name to the local path, leaving OriginalName as the source path
-	// TODO CREATE collection state data https://github.com/turbot/tailpipe-plugin-sdk/issues/11
 	return s.OnArtifactDownloaded(ctx, info)
 }
