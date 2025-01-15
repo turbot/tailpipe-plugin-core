@@ -9,6 +9,7 @@ import (
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
 	"github.com/turbot/tailpipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/tailpipe-plugin-sdk/plugin"
+	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
 	"log/slog"
@@ -47,14 +48,14 @@ func (p *Plugin) Init(context.Context) error {
 
 // Collect overrides the Collect method in PluginImpl - so we do not use the factory to create a collector,
 // instead we create our own
-func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*schema.RowSchema, error) {
+func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_source.ResolvedFromTime, *schema.RowSchema, error) {
 	slog.Info("Collect - core plugin")
 
 	// we expect the request to contain a custom table name, as this plugin only provides custom tables
 	// validate there is a table and that is has a format
 	err := p.validateRequest(req)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// we need to register a collector in the table factory for the custom table name
@@ -77,14 +78,14 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*schem
 	//case constants.SourceFormatJsonLines:
 	//case constants.SourceFormatJson:
 	default:
-		return nil, fmt.Errorf("unsupported source format: %s", req.SourceFormat.Target)
+		return nil, nil, fmt.Errorf("unsupported source format: %s", req.SourceFormat.Target)
 	}
 
 	// now we have a collector we can register it with the table factory
 	table.RegisterCollector(func() table.Collector { return collector })
 	// initialise the factory
 	if err := table.Factory.Init(); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// now call the base implementation of Collect
