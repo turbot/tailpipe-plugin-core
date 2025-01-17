@@ -87,7 +87,7 @@ func TestFileSource_DiscoverArtifacts(t *testing.T) {
 			},
 		},
 		{
-			name: "optional org with  org field in target path",
+			name: "optional org with org field in target path",
 			fields: fields{
 				paths:      []string{"./test_data/discover_test_1"},
 				fileLayout: "AWSLogs/(%{WORD:org}/)?%{WORD:account_id}/CloudTrail/%{NOTSPACE:file_name}.%{WORD:ext}",
