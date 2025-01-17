@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/elastic/go-grok"
+	typehelpers "github.com/turbot/go-kit/types"
 	"github.com/turbot/pipe-fittings/filter"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
@@ -20,8 +21,6 @@ func init() {
 
 type FileSource struct {
 	artifact_source.ArtifactSourceImpl[*FileSourceConfig, *artifact_source.EmptyConnection]
-
-	Paths []string
 }
 
 func (s *FileSource) Init(ctx context.Context, params *row_source.RowSourceParams, opts ...row_source.RowSourceOption) error {
@@ -30,12 +29,13 @@ func (s *FileSource) Init(ctx context.Context, params *row_source.RowSourceParam
 		return err
 	}
 
-	for _, p := range s.Config.Paths {
+	// ensure all paths are absolute
+	for i, p := range s.Config.Paths {
 		abs, err := filepath.Abs(p)
 		if err != nil {
 			return fmt.Errorf("error getting absolute path for %s: %v", p, err)
 		}
-		s.Paths = append(s.Paths, abs)
+		s.Config.Paths[i] = abs
 	}
 
 	return nil
@@ -48,8 +48,10 @@ func (s *FileSource) Identifier() string {
 func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 	// TODO KAI BAD SOURCE CONFIG GIVES NO ERROR
 
-	// if we have a layout, check whether this is a directory we should descend into
-	layout := s.Config.GetFileLayout()
+	// get the layout
+	layout := typehelpers.SafeString(s.Config.FileLayout)
+	// if there are any optional segments, we expand them into all possible alternatives
+	optionalLayouts := artifact_source.ExpandPatternIntoOptionalAlternatives(layout)
 
 	var filterMap = make(map[string]*filter.SqlFilter)
 
@@ -61,12 +63,12 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 	}
 
 	var errList []error
-	for _, basePath := range s.Paths {
+	for _, basePath := range s.Config.Paths {
 		err := filepath.WalkDir(basePath, func(targetPath string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
 			}
-			return s.WalkNode(ctx, targetPath, basePath, layout, d.IsDir(), g, filterMap)
+			return s.WalkNode(ctx, targetPath, basePath, optionalLayouts, d.IsDir(), g, filterMap)
 		})
 		if err != nil {
 			errList = append(errList, err)
