@@ -21,7 +21,7 @@ type testObserver struct {
 func (t *testObserver) Notify(ctx context.Context, e events.Event) error {
 	switch ty := e.(type) {
 	case *events.ArtifactDiscovered:
-		t.Artifacts = append(t.Artifacts, ty.Info.OriginalName)
+		t.Artifacts = append(t.Artifacts, ty.Info.Name)
 	}
 	return nil
 }
