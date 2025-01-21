@@ -4,14 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
+	"os"
+	"path/filepath"
+
 	"github.com/elastic/go-grok"
 	typehelpers "github.com/turbot/go-kit/types"
 	"github.com/turbot/pipe-fittings/filter"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/types"
-	"io/fs"
-	"path/filepath"
 )
 
 // register the source from the package init function
@@ -83,8 +85,14 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 
 // DownloadArtifact does nothing as the artifact already exists on the local file system
 func (s *FileSource) DownloadArtifact(ctx context.Context, info *types.ArtifactInfo) error {
-	// notify observers of the discovered artifact
-	// NOTE: just pass on the info as is
-	// if the file was downloaded we would update the Name to the local path, leaving OriginalName as the source path
-	return s.OnArtifactDownloaded(ctx, info)
+	// for file source, the local name is the same as the name
+	localName := info.Name
+	fileInfo, err := os.Stat(localName)
+	if err != nil {
+		return fmt.Errorf("error getting file info for %s: %v", localName, err)
+	}
+	downloadInfo := types.NewDownloadedArtifactInfo(info, localName, fileInfo.Size())
+
+	// notify observers of the downloaded artifact
+	return s.OnArtifactDownloaded(ctx, downloadInfo)
 }
