@@ -30,7 +30,7 @@ func TestFileSource_DiscoverArtifacts(t *testing.T) {
 	type fields struct {
 		paths      []string
 		fileLayout string
-		config     []byte
+		//config     []byte
 	}
 
 	tests := []struct {
