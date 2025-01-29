@@ -3,7 +3,7 @@ package sources
 import (
 	"fmt"
 	"github.com/hashicorp/hcl/v2"
-	"github.com/turbot/pipe-fittings/utils"
+	"github.com/turbot/pipe-fittings/v2/utils"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source_config"
 )
 
