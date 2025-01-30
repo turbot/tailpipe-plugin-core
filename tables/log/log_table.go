@@ -1,4 +1,4 @@
-package tables
+package log
 
 import (
 	"github.com/turbot/tailpipe-plugin-core/formats"

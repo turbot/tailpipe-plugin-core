@@ -1,4 +1,4 @@
-package sources
+package file
 
 import (
 	"context"
@@ -15,11 +15,6 @@ import (
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/types"
 )
-
-// register the source from the package init function
-func init() {
-	row_source.RegisterRowSource[*FileSource]()
-}
 
 type FileSource struct {
 	artifact_source.ArtifactSourceImpl[*FileSourceConfig, *artifact_source.EmptyConnection]

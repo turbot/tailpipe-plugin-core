@@ -1,23 +1,28 @@
 package core
 
 import (
-	"context"
-	"fmt"
 	"github.com/turbot/go-kit/helpers"
 	"github.com/turbot/tailpipe-plugin-core/formats"
-	"github.com/turbot/tailpipe-plugin-core/tables"
+	"github.com/turbot/tailpipe-plugin-core/sources/file"
+	"github.com/turbot/tailpipe-plugin-core/tables/log"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
 	"github.com/turbot/tailpipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/tailpipe-plugin-sdk/plugin"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
-	"log/slog"
 
-	// reference the table and sources packages to ensure that the tables and sources are registered by the init functions
-	_ "github.com/turbot/tailpipe-plugin-core/sources"
-	_ "github.com/turbot/tailpipe-plugin-core/tables"
+	"context"
+	"fmt"
+	"log/slog"
 )
+
+func init() 
+func init() {
+
+	// register sources
+	row_source.RegisterRowSource[*file.FileSource]()
+}
 
 const PluginName = "core"
 
@@ -67,9 +72,9 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 	switch req.SourceFormat.Target {
 	case constants.SourceFormatCustom:
 		slog.Info("Custom source format")
-		c := table.NewCollectorWithFormat[*table.DynamicRow, *formats.Custom, *tables.LogTable]()
+		c := table.NewCollectorWithFormat[*table.DynamicRow, *formats.Custom, *log.LogTable]()
 		// we need to set the name on the table
-		c.Table.(*tables.LogTable).Name = req.CustomTable.Name
+		c.Table.(*log.LogTable).Name = req.CustomTable.Name
 
 		collector = c
 	case constants.SourceFormatDelimited:
