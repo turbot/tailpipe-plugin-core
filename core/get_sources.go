@@ -1,4 +1,4 @@
-package sources
+package core
 
 import "github.com/turbot/tailpipe-plugin-sdk/row_source"
 
