@@ -1,6 +1,10 @@
 package core
 
 import (
+	"context"
+	"fmt"
+	"log/slog"
+
 	"github.com/turbot/go-kit/helpers"
 	"github.com/turbot/tailpipe-plugin-core/formats"
 	"github.com/turbot/tailpipe-plugin-core/sources/file"
@@ -11,15 +15,9 @@ import (
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
-
-	"context"
-	"fmt"
-	"log/slog"
 )
 
-func init() 
 func init() {
-
 	// register sources
 	row_source.RegisterRowSource[*file.FileSource]()
 }
