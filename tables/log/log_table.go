@@ -15,18 +15,22 @@ type LogTable struct {
 	Name string
 }
 
-func (c *LogTable) GetSourceMetadata() []*table.SourceMetadata[*table.DynamicRow] {
+func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRow], error) {
+	// c.Format will already be populated by our TableWithFormatImpl
+	mapper, err := mappers.NewGrokMapper[*table.DynamicRow](c.Format.Layout, c.Format.Patterns)
+	if err != nil {
+		return nil, err
+	}
 	return []*table.SourceMetadata[*table.DynamicRow]{
 		{
 			// any artifact source
 			SourceName: constants.ArtifactSourceIdentifier,
-			// format should have been set for us
-			Mapper: mappers.NewGonxMapper[*table.DynamicRow](c.Format.Pattern),
+			Mapper:     mapper,
 			Options: []row_source.RowSourceOption{
 				artifact_source.WithRowPerLine(),
 			},
 		},
-	}
+	}, nil
 }
 
 func (c *LogTable) Identifier() string {
