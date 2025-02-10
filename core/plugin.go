@@ -6,10 +6,10 @@ import (
 	"log/slog"
 
 	"github.com/turbot/go-kit/helpers"
-	"github.com/turbot/tailpipe-plugin-core/formats"
 	"github.com/turbot/tailpipe-plugin-core/sources/file"
 	"github.com/turbot/tailpipe-plugin-core/tables/log"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
+	"github.com/turbot/tailpipe-plugin-sdk/formats"
 	"github.com/turbot/tailpipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/tailpipe-plugin-sdk/plugin"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
