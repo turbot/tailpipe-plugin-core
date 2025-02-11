@@ -39,6 +39,9 @@ func (c *LogTable) Identifier() string {
 
 func (c *LogTable) EnrichRow(row *table.DynamicRow, sourceEnrichmentFields schema.SourceEnrichment) (*table.DynamicRow, error) {
 	// tell the row to enrich itself using any mappings specified in the source format
-	row.Enrich(sourceEnrichmentFields.CommonFields)
+	err := row.Enrich(sourceEnrichmentFields.CommonFields)
+	if err != nil {
+		return nil, err
+	}
 	return row, nil
 }
