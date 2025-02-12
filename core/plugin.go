@@ -63,10 +63,9 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 		return nil, nil, err
 	}
 
-
 	// we expect the request to contain a custom table name, as this plugin only provides custom tables
 	// validate there is a table and that is has a format
-	err := p.validateRequest(req)
+	err = p.validateRequest(req)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -81,11 +80,13 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 	case constants.SourceFormatCustom:
 		slog.Info("Custom source format")
 
-		format := formats.NewCustomFormat(collectRequest.SourceFormat)
-		var c = table.NewCustomCollector[*log.LogTable](collectRequest.)
-		// we need to set the name on the table
+		format, err := formats.NewCustomFormat(collectRequest.SourceFormat)
+		if err != nil {
+			return nil, nil, err
+		}
+		c := table.NewCustomCollector[*log.LogTable](format)
+		// set the name on the table
 		c.Table.(*log.LogTable).Name = req.CustomTable.Name
-
 		collector = c
 	case constants.SourceFormatDelimited:
 		slog.Info("Delimited source format")
