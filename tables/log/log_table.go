@@ -6,17 +6,16 @@ import (
 	"github.com/turbot/tailpipe-plugin-sdk/formats"
 	"github.com/turbot/tailpipe-plugin-sdk/mappers"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
-	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
 )
 
 type LogTable struct {
-	table.TableWithFormatImpl[*formats.Custom]
+	table.CustomTableImpl[*formats.Custom]
 	Name string
 }
 
 func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRow], error) {
-	// c.Format will already be populated by our TableWithFormatImpl
+	// c.Format will already be populated by our CustomTableImpl
 	mapper, err := mappers.NewGrokMapper[*table.DynamicRow](c.Format.Layout, c.Format.Patterns)
 	if err != nil {
 		return nil, err
@@ -35,13 +34,4 @@ func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRo
 
 func (c *LogTable) Identifier() string {
 	return c.Name
-}
-
-func (c *LogTable) EnrichRow(row *table.DynamicRow, sourceEnrichmentFields schema.SourceEnrichment) (*table.DynamicRow, error) {
-	// tell the row to enrich itself using any mappings specified in the source format
-	err := row.Enrich(sourceEnrichmentFields.CommonFields)
-	if err != nil {
-		return nil, err
-	}
-	return row, nil
 }

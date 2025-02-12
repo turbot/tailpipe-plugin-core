@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"github.com/turbot/tailpipe-plugin-sdk/types"
 	"log/slog"
 
 	"github.com/turbot/go-kit/helpers"
@@ -54,6 +55,15 @@ func (p *Plugin) Init(context.Context) error {
 func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_source.ResolvedFromTime, *schema.RowSchema, error) {
 	slog.Info("Collect - core plugin")
 
+	// map req to our internal type
+	collectRequest, err := types.CollectRequestFromProto(req)
+	if err != nil {
+		slog.Error("CollectRequestFromProto failed", "error", err)
+
+		return nil, nil, err
+	}
+
+
 	// we expect the request to contain a custom table name, as this plugin only provides custom tables
 	// validate there is a table and that is has a format
 	err := p.validateRequest(req)
@@ -70,7 +80,9 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 	switch req.SourceFormat.Target {
 	case constants.SourceFormatCustom:
 		slog.Info("Custom source format")
-		c := table.NewCollectorWithFormat[*table.DynamicRow, *formats.Custom, *log.LogTable]()
+
+		format := formats.NewCustomFormat(collectRequest.SourceFormat)
+		var c = table.NewCustomCollector[*log.LogTable](collectRequest.)
 		// we need to set the name on the table
 		c.Table.(*log.LogTable).Name = req.CustomTable.Name
 
@@ -85,7 +97,7 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 	}
 
 	// now we have a collector we can register it with the table factory
-	table.RegisterCollector(func() table.Collector { return collector })
+	table.RegisterCollector(collector)
 	// initialise the factory
 	if err := table.Factory.Init(); err != nil {
 		return nil, nil, err
