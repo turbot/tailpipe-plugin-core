@@ -1,25 +1,25 @@
 package log
 
 import (
+	"fmt"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
-	"github.com/turbot/tailpipe-plugin-sdk/formats"
-	"github.com/turbot/tailpipe-plugin-sdk/mappers"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
 )
 
 type LogTable struct {
-	table.CustomTableImpl[*formats.Custom]
+	table.CustomTableImpl[*table.DynamicRow]
 	Name string
 }
 
 func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRow], error) {
-	// c.Format will already be populated by our CustomTableImpl
-	mapper, err := mappers.NewGrokMapper[*table.DynamicRow](c.Format.Layout, c.Format.Patterns)
+	// ask our custom table for the mapper
+	mapper, err := c.GetMapper()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error creating '%s' mapper for custom table '%s': %w", c.Format.Identifier(), c.Identifier(), err)
 	}
+
 	return []*table.SourceMetadata[*table.DynamicRow]{
 		{
 			// any artifact source

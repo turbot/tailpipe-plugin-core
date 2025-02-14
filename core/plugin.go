@@ -3,13 +3,13 @@ package core
 import (
 	"context"
 	"fmt"
+	"github.com/turbot/tailpipe-plugin-sdk/context_values"
 	"github.com/turbot/tailpipe-plugin-sdk/types"
 	"log/slog"
 
 	"github.com/turbot/go-kit/helpers"
 	"github.com/turbot/tailpipe-plugin-core/sources/file"
 	"github.com/turbot/tailpipe-plugin-core/tables/log"
-	"github.com/turbot/tailpipe-plugin-sdk/constants"
 	"github.com/turbot/tailpipe-plugin-sdk/formats"
 	"github.com/turbot/tailpipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/tailpipe-plugin-sdk/plugin"
@@ -50,70 +50,42 @@ func (p *Plugin) Init(context.Context) error {
 	return nil
 }
 
-// Collect overrides the Collect method in PluginImpl - so we do not use the factory to create a collector,
-// instead we create our own
+// Collect overrides the Collect method in PluginImpl - we do this to parse the format
+// which is used to register the custom table
 func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_source.ResolvedFromTime, *schema.RowSchema, error) {
+	// create context containing execution id
+	ctx = context_values.WithExecutionId(ctx, req.ExecutionId)
+
 	slog.Info("Collect - core plugin")
 
-	// map req to our internal type
 	collectRequest, err := types.CollectRequestFromProto(req)
 	if err != nil {
 		slog.Error("CollectRequestFromProto failed", "error", err)
 
 		return nil, nil, err
 	}
-
 	// we expect the request to contain a custom table name, as this plugin only provides custom tables
 	// validate there is a table and that is has a format
-	err = p.validateRequest(req)
-	if err != nil {
+	if err = p.validateRequest(collectRequest); err != nil {
 		return nil, nil, err
 	}
-
+	// map req to our internal type
+	// parse the format
+	format, err := formats.ParseFormat(collectRequest.SourceFormat)
 	// we need to register a collector in the table factory for the custom table name
 	// this is so that the table factory can create the collector when it is needed
-	// determine whether we need an ArtifactConversionCollector or a standard CollectorImpl
-
-	var collector table.Collector
-
-	switch req.SourceFormat.Target {
-	case constants.SourceFormatCustom:
-		slog.Info("Custom source format")
-
-		format, err := formats.NewCustomFormat(collectRequest.SourceFormat)
-		if err != nil {
-			return nil, nil, err
-		}
-		c := table.NewCustomCollector[*log.LogTable](format)
-		// set the name on the table
-		c.Table.(*log.LogTable).Name = req.CustomTable.Name
-		collector = c
-	case constants.SourceFormatDelimited:
-		slog.Info("Delimited source format")
-		collector = table.NewArtifactConversionCollector[*formats.Delimited](req.CustomTable.Name, req.SourceFormat)
-	//case constants.SourceFormatJsonLines:
-	//case constants.SourceFormatJson:
-	default:
-		return nil, nil, fmt.Errorf("unsupported source format: %s", req.SourceFormat.Target)
-	}
-
-	// now we have a collector we can register it with the table factory
-	table.RegisterCollector(collector)
-	// initialise the factory
-	if err := table.Factory.Init(); err != nil {
-		return nil, nil, err
-	}
+	table.RegisterCustomTable[*table.DynamicRow, *log.LogTable](collectRequest.CustomTableDef, format)
 
 	// now call the base implementation of Collect
-	return p.PluginImpl.Collect(ctx, req)
+	return p.PluginImpl.DoCollect(ctx, collectRequest)
 }
 
 // validate there is a table and that is has a format
-func (p *Plugin) validateRequest(req *proto.CollectRequest) error {
-	if req.CustomTable == nil {
+func (p *Plugin) validateRequest(req *types.CollectRequest) error {
+	if req.CustomTableDef == nil {
 		return fmt.Errorf("custom table is required")
 	}
-	if req.CustomTable.Name == "" {
+	if req.CustomTableDef.Name == "" {
 		return fmt.Errorf("custom table name is required")
 	}
 	if req.SourceFormat == nil {
