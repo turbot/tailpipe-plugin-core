@@ -34,18 +34,6 @@ func (c *LogTable) GetTableDef() *types.CustomTableDef {
 	return &c.CustomTableDef
 }
 
-// SetFormat sets the format for the custom table - it allows the the format to be set from config
-func (c *LogTable) SetFormat(format parse.Config) {
-	c.Format = format
-}
-
-// SetCustomTableDef sets the table def for the custom table - it allows the the table def to be set from config
-func (c *LogTable) SetCustomTableDef(tableDef *types.CustomTableDef) {
-	if tableDef != nil {
-		c.CustomTableDef = *tableDef
-	}
-}
-
 func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRow], error) {
 	// ask our custom table for the mapper
 	mapper, err := c.GetMapper()
