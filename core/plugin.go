@@ -44,12 +44,6 @@ func NewPlugin() (_ plugin.TailpipePlugin, err error) {
 	return p, nil
 }
 
-// Init Override the Init method in PluginImpl to do nothing
-// (we will initialise the table factory in the Collect method, after registering the collector for the custom table)
-func (p *Plugin) Init(context.Context) error {
-	return nil
-}
-
 // Collect overrides the Collect method in PluginImpl - we do this to parse the format
 // which is used to register the custom table
 func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_source.ResolvedFromTime, *schema.RowSchema, error) {
