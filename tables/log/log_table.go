@@ -17,7 +17,7 @@ type LogTable struct {
 }
 
 func (c *LogTable) Identifier() string {
-	return c.CustomTableDef.Name
+	return c.Name
 }
 
 // GetFormat implements the CustomTable interface
@@ -31,7 +31,10 @@ func (c *LogTable) GetFormat() parse.Config {
 // just return the TableDef field
 // (for 'predefined' custom table types this will be implemented by returning the predefined table def)
 func (c *LogTable) GetTableDef() *types.CustomTableDef {
-	return &c.CustomTableDef
+	return &types.CustomTableDef{
+		Name:   c.Name,
+		Schema: c.Schema,
+	}
 }
 
 func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRow], error) {
