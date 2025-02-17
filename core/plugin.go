@@ -70,7 +70,7 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 	// register a collector in the table factory for the custom table name
 	// this is so that the table factory can create the collector when it is needed
 	// NOTE: pass the table def and format as option
-	table.RegisterCustomTable[*table.DynamicRow, *log.LogTable](table.WithTableDef(collectRequest.CustomTableDef, format))
+	table.RegisterCustomTable[*log.LogTable](table.WithTableDef(collectRequest.CustomTableDef, format))
 
 	// now call the base implementation of Collect
 	return p.PluginImpl.DoCollect(ctx, collectRequest)

@@ -13,7 +13,7 @@ import (
 // LogTable is a CustomTable implementation for a fully custom table,
 // where the format and table def are provided by the partition config
 type LogTable struct {
-	table.CustomTableImpl[*table.DynamicRow]
+	table.CustomTableImpl
 }
 
 func (c *LogTable) Identifier() string {
@@ -34,10 +34,12 @@ func (c *LogTable) GetTableDef() *types.CustomTableDef {
 	return &c.CustomTableDef
 }
 
+// SetFormat sets the format for the custom table - it allows the the format to be set from config
 func (c *LogTable) SetFormat(format parse.Config) {
 	c.Format = format
 }
 
+// SetCustomTableDef sets the table def for the custom table - it allows the the table def to be set from config
 func (c *LogTable) SetCustomTableDef(tableDef *types.CustomTableDef) {
 	if tableDef != nil {
 		c.CustomTableDef = *tableDef
