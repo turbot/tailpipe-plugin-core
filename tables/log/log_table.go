@@ -1,26 +1,46 @@
 package log
 
 import (
+	"fmt"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
-	"github.com/turbot/tailpipe-plugin-sdk/formats"
-	"github.com/turbot/tailpipe-plugin-sdk/mappers"
+	"github.com/turbot/tailpipe-plugin-sdk/parse"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
-	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
+	"github.com/turbot/tailpipe-plugin-sdk/types"
 )
 
+// LogTable is a CustomTable implementation for a fully custom table,
+// where the format and table def are provided by the partition config
 type LogTable struct {
-	table.TableWithFormatImpl[*formats.Custom]
-	Name string
+	table.CustomTableImpl
+}
+
+func (c *LogTable) Identifier() string {
+	return c.CustomTableDef.Name
+}
+
+// GetFormat implements the CustomTable interface
+// just return the Format field
+// (for 'predefined' custom table types this will be implemented by returning the predefined format)
+func (c *LogTable) GetFormat() parse.Config {
+	return c.Format
+}
+
+// GetTableDef implements the CustomTable interface
+// just return the TableDef field
+// (for 'predefined' custom table types this will be implemented by returning the predefined table def)
+func (c *LogTable) GetTableDef() *types.CustomTableDef {
+	return &c.CustomTableDef
 }
 
 func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRow], error) {
-	// c.Format will already be populated by our TableWithFormatImpl
-	mapper, err := mappers.NewGrokMapper[*table.DynamicRow](c.Format.Layout, c.Format.Patterns)
+	// ask our custom table for the mapper
+	mapper, err := c.GetMapper()
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error creating '%s' mapper for custom table '%s': %w", c.Format.Identifier(), c.Identifier(), err)
 	}
+
 	return []*table.SourceMetadata[*table.DynamicRow]{
 		{
 			// any artifact source
@@ -31,17 +51,4 @@ func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRo
 			},
 		},
 	}, nil
-}
-
-func (c *LogTable) Identifier() string {
-	return c.Name
-}
-
-func (c *LogTable) EnrichRow(row *table.DynamicRow, sourceEnrichmentFields schema.SourceEnrichment) (*table.DynamicRow, error) {
-	// tell the row to enrich itself using any mappings specified in the source format
-	err := row.Enrich(sourceEnrichmentFields.CommonFields)
-	if err != nil {
-		return nil, err
-	}
-	return row, nil
 }
