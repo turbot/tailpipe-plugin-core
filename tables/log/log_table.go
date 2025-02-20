@@ -2,12 +2,13 @@ package log
 
 import (
 	"fmt"
+
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
 	"github.com/turbot/tailpipe-plugin-sdk/parse"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
+	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
-	"github.com/turbot/tailpipe-plugin-sdk/types"
 )
 
 // LogTable is a CustomTable implementation for a fully custom table,
@@ -17,7 +18,7 @@ type LogTable struct {
 }
 
 func (c *LogTable) Identifier() string {
-	return c.Name
+	return c.Schema.Name
 }
 
 // GetFormat implements the CustomTable interface
@@ -27,14 +28,11 @@ func (c *LogTable) GetFormat() parse.Config {
 	return c.Format
 }
 
-// GetTableDef implements the CustomTable interface
+// GetSchema implements the CustomTable interface
 // just return the TableDef field
 // (for 'predefined' custom table types this will be implemented by returning the predefined table def)
-func (c *LogTable) GetTableDef() *types.CustomTableDef {
-	return &types.CustomTableDef{
-		Name:   c.Name,
-		Schema: c.Schema,
-	}
+func (c *LogTable) GetSchema() *schema.TableSchema {
+	return c.Schema
 }
 
 func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRow], error) {

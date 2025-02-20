@@ -46,7 +46,7 @@ func NewPlugin() (_ plugin.TailpipePlugin, err error) {
 
 // Collect overrides the Collect method in PluginImpl - we do this to parse the format
 // which is used to register the custom table
-func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_source.ResolvedFromTime, *schema.RowSchema, error) {
+func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_source.ResolvedFromTime, *schema.TableSchema, error) {
 	// create context containing execution id
 	ctx = context_values.WithExecutionId(ctx, req.ExecutionId)
 
@@ -70,7 +70,7 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 	// register a collector in the table factory for the custom table name
 	// this is so that the table factory can create the collector when it is needed
 	// NOTE: pass the table def and format as option
-	table.RegisterCustomTable[*log.LogTable](table.WithTableDef(collectRequest.CustomTableDef, format))
+	table.RegisterCustomTable[*log.LogTable](table.WithTableDef(collectRequest.CustomTableSchema, format))
 
 	// now call the base implementation of Collect
 	return p.PluginImpl.DoCollect(ctx, collectRequest)
@@ -78,10 +78,10 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 
 // validate there is a table and that is has a format
 func (p *Plugin) validateRequest(req *types.CollectRequest) error {
-	if req.CustomTableDef == nil {
+	if req.CustomTableSchema == nil {
 		return fmt.Errorf("custom table is required")
 	}
-	if req.CustomTableDef.Name == "" {
+	if req.CustomTableSchema.Name == "" {
 		return fmt.Errorf("custom table name is required")
 	}
 	if req.SourceFormat == nil {
