@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
+	"log/slog"
 	"os"
 	"path/filepath"
 
@@ -52,6 +53,8 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 
 	var filterMap = make(map[string]*filter.SqlFilter)
 
+	slog.Info("FileSource.DiscoverArtifacts", "layout", layout, "optionalLayouts", optionalLayouts)
+
 	g := grok.New()
 	// add any patterns defined in config
 	err := g.AddPatterns(s.Config.GetPatterns())
@@ -73,8 +76,10 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 
 	}
 	if len(errList) > 0 {
+		slog.Error("FileSource.DiscoverArtifacts complete with errors", "errors", errList)
 		return errors.Join(errList...)
 	}
+	slog.Info("FileSource.DiscoverArtifacts complete")
 	return nil
 }
 

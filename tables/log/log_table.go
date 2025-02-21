@@ -1,40 +1,39 @@
 package log
 
 import (
-	"github.com/turbot/tailpipe-plugin-core/formats"
+	"fmt"
+
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
-	"github.com/turbot/tailpipe-plugin-sdk/mappers"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
-	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
 )
 
+// LogTable is a CustomTable implementation for a fully custom table,
+// where the format and table def are provided by the partition config
 type LogTable struct {
-	table.TableWithFormatImpl[*formats.Custom]
-	Name string
+	table.CustomTableImpl
 }
 
-func (c *LogTable) GetSourceMetadata() []*table.SourceMetadata[*table.DynamicRow] {
+func (c *LogTable) Identifier() string {
+	return c.Schema.Name
+}
+
+func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRow], error) {
+	// ask our custom table for the mapper
+	mapper, err := c.GetMapper()
+	if err != nil {
+		return nil, fmt.Errorf("error creating '%s' mapper for custom table '%s': %w", c.Format.Identifier(), c.Identifier(), err)
+	}
+
 	return []*table.SourceMetadata[*table.DynamicRow]{
 		{
 			// any artifact source
 			SourceName: constants.ArtifactSourceIdentifier,
-			// format should have been set for us
-			Mapper: mappers.NewGonxMapper[*table.DynamicRow](c.Format.Pattern),
+			Mapper:     mapper,
 			Options: []row_source.RowSourceOption{
 				artifact_source.WithRowPerLine(),
 			},
 		},
-	}
-}
-
-func (c *LogTable) Identifier() string {
-	return c.Name
-}
-
-func (c *LogTable) EnrichRow(row *table.DynamicRow, sourceEnrichmentFields schema.SourceEnrichment) (*table.DynamicRow, error) {
-	// tell the row to enrich itself using any mappings specified in the source format
-	row.Enrich(sourceEnrichmentFields.CommonFields)
-	return row, nil
+	}, nil
 }
