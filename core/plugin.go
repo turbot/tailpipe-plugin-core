@@ -3,19 +3,19 @@ package core
 import (
 	"context"
 	"fmt"
-	"github.com/turbot/tailpipe-plugin-sdk/context_values"
-	"github.com/turbot/tailpipe-plugin-sdk/types"
 	"log/slog"
 
 	"github.com/turbot/go-kit/helpers"
 	"github.com/turbot/tailpipe-plugin-core/sources/file"
 	"github.com/turbot/tailpipe-plugin-core/tables/log"
+	"github.com/turbot/tailpipe-plugin-sdk/context_values"
 	"github.com/turbot/tailpipe-plugin-sdk/formats"
 	"github.com/turbot/tailpipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/tailpipe-plugin-sdk/plugin"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
+	"github.com/turbot/tailpipe-plugin-sdk/types"
 )
 
 func init() {
@@ -64,13 +64,15 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 		return nil, nil, err
 	}
 	// map req to our internal type
+
 	// parse the format
 	format, err := formats.ParseFormat(collectRequest.SourceFormat)
-
-	// register a collector in the table factory for the custom table name
+	if err != nil {
+		return nil, nil, err
+	}
+	// register a collector in the table factory for the custom table name, passing the format and schema
 	// this is so that the table factory can create the collector when it is needed
-	// NOTE: pass the table def and format as option
-	table.RegisterCustomTable[*log.LogTable](table.WithTableDef(collectRequest.CustomTableSchema, format))
+	table.RegisterCustomTable[*log.LogTable](format, collectRequest.CustomTableSchema)
 
 	// now call the base implementation of Collect
 	return p.PluginImpl.DoCollect(ctx, collectRequest)
