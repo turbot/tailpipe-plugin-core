@@ -2,6 +2,9 @@ package log
 
 import (
 	"fmt"
+	"github.com/turbot/tailpipe-plugin-sdk/formats"
+	"github.com/turbot/tailpipe-plugin-sdk/schema"
+	"github.com/turbot/tailpipe-plugin-sdk/types"
 
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
@@ -9,24 +12,24 @@ import (
 	"github.com/turbot/tailpipe-plugin-sdk/table"
 )
 
-// LogTable is a CustomTable implementation for a fully custom table,
+// CustomLogTable is a CustomTable implementation for a fully custom table,
 // where the format and table def are provided by the partition config
-type LogTable struct {
+type CustomLogTable struct {
 	table.CustomTableImpl
 }
 
-func (c *LogTable) Identifier() string {
+func (c *CustomLogTable) Identifier() string {
 	return c.Schema.Name
 }
 
-func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRow], error) {
+func (c *CustomLogTable) GetSourceMetadata() ([]*table.SourceMetadata[*types.DynamicRow], error) {
 	// ask our custom table for the mapper
 	mapper, err := c.GetMapper()
 	if err != nil {
 		return nil, fmt.Errorf("error creating '%s' mapper for custom table '%s': %w", c.Format.Identifier(), c.Identifier(), err)
 	}
 
-	return []*table.SourceMetadata[*table.DynamicRow]{
+	return []*table.SourceMetadata[*types.DynamicRow]{
 		{
 			// any artifact source
 			SourceName: constants.ArtifactSourceIdentifier,
@@ -36,4 +39,18 @@ func (c *LogTable) GetSourceMetadata() ([]*table.SourceMetadata[*table.DynamicRo
 			},
 		},
 	}, nil
+}
+
+func (c *CustomLogTable) GetSupportedFormats() *formats.SupportedFormats {
+	return &formats.SupportedFormats{
+		Formats: map[string]func() formats.Format{
+			constants.SourceFormatGrok:  formats.NewGrok,
+			constants.SourceFormatRegex: formats.NewRegex,
+		},
+	}
+}
+
+func (c *CustomLogTable) GetTableDefinition() *schema.TableSchema {
+	// the log table has no fixed definition - it is defined purely in config
+	return nil
 }
