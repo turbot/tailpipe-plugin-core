@@ -55,8 +55,8 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 		return nil, nil, err
 	}
 
-	// now register a custom table in the factory
-	table.RegisterNamedCustomTable[*log.CustomLogTable](req.CustomTableSchema.Name)
+	// now register a custom table in the factory using the options pattern
+	table.RegisterCustomTable[*log.CustomLogTable](table.WithName(req.CustomTableSchema.Name))
 
 	// now call the base implementation of Collect
 	return p.PluginImpl.Collect(ctx, req)
