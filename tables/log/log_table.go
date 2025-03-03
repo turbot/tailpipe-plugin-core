@@ -23,8 +23,8 @@ func (c *CustomLogTable) Identifier() string {
 }
 
 func (c *CustomLogTable) GetSourceMetadata() ([]*table.SourceMetadata[*types.DynamicRow], error) {
-	// ask our custom table for the mapper
-	mapper, err := c.GetMapper()
+	// ask our format for the mapper
+	mapper, err := c.Format.GetMapper()
 	if err != nil {
 		return nil, fmt.Errorf("error creating '%s' mapper for custom table '%s': %w", c.Format.Identifier(), c.Identifier(), err)
 	}
