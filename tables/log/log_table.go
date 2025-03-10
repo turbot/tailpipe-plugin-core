@@ -19,6 +19,10 @@ type CustomLogTable struct {
 }
 
 func (c *CustomLogTable) Identifier() string {
+	// if the schema has not been set, return the default identifier
+	if c.Schema == nil {
+		return "custom_log_table"
+	}
 	return c.Schema.Name
 }
 
