@@ -9,13 +9,11 @@ import (
 	"github.com/turbot/tailpipe-plugin-core/sources/file"
 	"github.com/turbot/tailpipe-plugin-core/tables/log"
 	"github.com/turbot/tailpipe-plugin-sdk/context_values"
-	"github.com/turbot/tailpipe-plugin-sdk/formats"
 	"github.com/turbot/tailpipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/tailpipe-plugin-sdk/plugin"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
-	"github.com/turbot/tailpipe-plugin-sdk/types"
 )
 
 func init() {
@@ -40,7 +38,6 @@ func NewPlugin() (_ plugin.TailpipePlugin, err error) {
 		PluginImpl: plugin.NewPluginImpl(PluginName),
 	}
 
-	// override the default table factory with out own implementation
 	return p, nil
 }
 
@@ -52,34 +49,21 @@ func (p *Plugin) Collect(ctx context.Context, req *proto.CollectRequest) (*row_s
 
 	slog.Info("Collect - core plugin")
 
-	collectRequest, err := types.CollectRequestFromProto(req)
-	if err != nil {
-		slog.Error("CollectRequestFromProto failed", "error", err)
-
-		return nil, nil, err
-	}
 	// we expect the request to contain a custom table name, as this plugin only provides custom tables
 	// validate there is a table and that is has a format
-	if err = p.validateRequest(collectRequest); err != nil {
+	if err := p.validateRequest(req); err != nil {
 		return nil, nil, err
 	}
-	// map req to our internal type
 
-	// parse the format
-	format, err := formats.ParseFormat(collectRequest.SourceFormat)
-	if err != nil {
-		return nil, nil, err
-	}
-	// register a collector in the table factory for the custom table name, passing the format and schema
-	// this is so that the table factory can create the collector when it is needed
-	table.RegisterCustomTable[*log.LogTable](format, collectRequest.CustomTableSchema)
+	// now register a custom table in the factory using the options pattern
+	table.RegisterCustomTable[*log.CustomLogTable](table.WithName(req.CustomTableSchema.Name))
 
 	// now call the base implementation of Collect
-	return p.PluginImpl.DoCollect(ctx, collectRequest)
+	return p.PluginImpl.Collect(ctx, req)
 }
 
 // validate there is a table and that is has a format
-func (p *Plugin) validateRequest(req *types.CollectRequest) error {
+func (p *Plugin) validateRequest(req *proto.CollectRequest) error {
 	if req.CustomTableSchema == nil {
 		return fmt.Errorf("custom table is required")
 	}

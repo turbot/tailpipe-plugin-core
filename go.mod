@@ -11,7 +11,7 @@ require (
 	github.com/elastic/go-grok v0.3.1
 	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/turbot/go-kit v1.1.0
-	github.com/turbot/pipe-fittings/v2 v2.1.0-rc.0
+	github.com/turbot/pipe-fittings/v2 v2.2.0
 	github.com/turbot/tailpipe-plugin-sdk v0.1.0
 )
 
