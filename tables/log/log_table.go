@@ -2,14 +2,13 @@ package log
 
 import (
 	"fmt"
-	"github.com/turbot/tailpipe-plugin-sdk/formats"
-	"github.com/turbot/tailpipe-plugin-sdk/schema"
-	"github.com/turbot/tailpipe-plugin-sdk/types"
 
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
+	"github.com/turbot/tailpipe-plugin-sdk/schema"
 	"github.com/turbot/tailpipe-plugin-sdk/table"
+	"github.com/turbot/tailpipe-plugin-sdk/types"
 )
 
 // CustomLogTable is a CustomTable implementation for a fully custom table,
@@ -43,15 +42,6 @@ func (c *CustomLogTable) GetSourceMetadata() ([]*table.SourceMetadata[*types.Dyn
 			},
 		},
 	}, nil
-}
-
-func (c *CustomLogTable) GetSupportedFormats() *formats.SupportedFormats {
-	return &formats.SupportedFormats{
-		Formats: map[string]func() formats.Format{
-			constants.SourceFormatGrok:  formats.NewGrok,
-			constants.SourceFormatRegex: formats.NewRegex,
-		},
-	}
 }
 
 func (c *CustomLogTable) GetTableDefinition() *schema.TableSchema {
