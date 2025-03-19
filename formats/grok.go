@@ -3,7 +3,7 @@ package formats
 import (
 	"fmt"
 	"github.com/turbot/tailpipe-plugin-sdk/constants"
-	formats2 "github.com/turbot/tailpipe-plugin-sdk/formats"
+	sdkformats "github.com/turbot/tailpipe-plugin-sdk/formats"
 	"github.com/turbot/tailpipe-plugin-sdk/mappers"
 	"github.com/turbot/tailpipe-plugin-sdk/types"
 )
@@ -20,7 +20,7 @@ type Grok struct {
 	Patterns map[string]string `hcl:"patterns,optional"`
 }
 
-func NewGrok() formats2.Format {
+func NewGrok() sdkformats.Format {
 	return &Grok{}
 }
 
