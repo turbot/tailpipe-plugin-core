@@ -3,12 +3,15 @@ package core
 import (
 	"context"
 	"fmt"
+
 	"log/slog"
 
 	"github.com/turbot/go-kit/helpers"
+	"github.com/turbot/tailpipe-plugin-core/formats"
 	"github.com/turbot/tailpipe-plugin-core/sources/file"
 	"github.com/turbot/tailpipe-plugin-core/tables/log"
 	"github.com/turbot/tailpipe-plugin-sdk/context_values"
+	sdkformats "github.com/turbot/tailpipe-plugin-sdk/formats"
 	"github.com/turbot/tailpipe-plugin-sdk/grpc/proto"
 	"github.com/turbot/tailpipe-plugin-sdk/plugin"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
@@ -19,6 +22,17 @@ import (
 func init() {
 	// register sources
 	row_source.RegisterRowSource[*file.FileSource]()
+
+	// register formats
+	table.RegisterFormat[*formats.Grok]()
+	// the Regex format is actually defined in the SDK, so any plugin can use it as a default format
+	// however the Core plugin registers is so it will appear in the introspection data for the core plugin
+	table.RegisterFormat[*sdkformats.Regex]()
+	// the Delimited format is actually defined in the SDK, as we have different collection logic for custom tables
+	// using delimitedformat
+	// however the Core plugin registers is so it will appear in the introspection data for the core plugin
+	table.RegisterFormat[*sdkformats.Delimited]()
+
 }
 
 const PluginName = "core"
