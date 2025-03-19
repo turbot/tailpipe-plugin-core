@@ -38,11 +38,6 @@ func (g *Grok) GetName() string {
 	return g.Name
 }
 
-// GetFullName returns the full name (type.name) of this format instance
-func (g *Grok) GetFullName() string {
-	return fmt.Sprintf("%s.%s", g.Identifier(), g.Name)
-}
-
 // SetName sets the name of this format instance
 func (g *Grok) SetName(name string) {
 	g.Name = name
