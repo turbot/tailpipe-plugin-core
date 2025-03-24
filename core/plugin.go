@@ -23,7 +23,7 @@ func init() {
 	row_source.RegisterRowSource[*file.FileSource]()
 
 	// register formats
-	table.RegisterFormat[*sdkformats.Grok]()
+	//table.RegisterFormat[*sdkformats.Grok]()
 	// the Regex format is actually defined in the SDK, so any plugin can use it as a default format
 	// however the Core plugin registers is so it will appear in the introspection data for the core plugin
 	table.RegisterFormat[*sdkformats.Regex]()
