@@ -22,15 +22,12 @@ func init() {
 	// register sources
 	row_source.RegisterRowSource[*file.FileSource]()
 
-	// register formats
-	//table.RegisterFormat[*sdkformats.Grok]()
-	// the Regex format is actually defined in the SDK, so any plugin can use it as a default format
-	// however the Core plugin registers is so it will appear in the introspection data for the core plugin
+	// register formats - these are actually defined in the sdk so other plugins can use them as default -
+	// but we register them as ours
+	table.RegisterFormat[*sdkformats.Grok]()
 	table.RegisterFormat[*sdkformats.Regex]()
-	// the Delimited format is actually defined in the SDK, as we have different collection logic for custom tables
-	// using delimitedformat
-	// however the Core plugin registers is so it will appear in the introspection data for the core plugin
 	table.RegisterFormat[*sdkformats.Delimited]()
+	table.RegisterFormat[*sdkformats.JsonLines]()
 
 }
 
