@@ -3,16 +3,16 @@ module github.com/turbot/tailpipe-plugin-core
 go 1.24
 
 replace (
-	github.com/turbot/pipe-fittings/v2 => ../pipe-fittings
-	github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
+	//github.com/turbot/pipe-fittings/v2 => ../pipe-fittings
+	//github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
 )
 
 require (
 	github.com/elastic/go-grok v0.3.1
 	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/turbot/go-kit v1.2.0
-	github.com/turbot/pipe-fittings/v2 v2.3.0-rc.2
-	github.com/turbot/tailpipe-plugin-sdk v0.2.0-alpha.3
+	github.com/turbot/pipe-fittings/v2 v2.3.0-rc.3
+   	github.com/turbot/tailpipe-plugin-sdk v0.2.0-rc.1
 )
 
 require (
