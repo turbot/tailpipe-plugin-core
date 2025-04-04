@@ -2,17 +2,15 @@ module github.com/turbot/tailpipe-plugin-core
 
 go 1.24
 
-replace (
-	//github.com/turbot/pipe-fittings/v2 => ../pipe-fittings
-	//github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
-)
+//github.com/turbot/pipe-fittings/v2 => ../pipe-fittings
+//replace github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
 
 require (
 	github.com/elastic/go-grok v0.3.1
 	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/turbot/go-kit v1.2.0
-	github.com/turbot/pipe-fittings/v2 v2.3.0-rc.4
-	github.com/turbot/tailpipe-plugin-sdk v0.2.0-rc.4
+	github.com/turbot/pipe-fittings/v2 v2.3.0
+	github.com/turbot/tailpipe-plugin-sdk v0.2.1-rc.0
 )
 
 require (
@@ -103,6 +101,7 @@ require (
 	github.com/hokaccha/go-prettyjson v0.0.0-20211117102719-0474bc63780f // indirect
 	github.com/iancoleman/strcase v0.3.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+	github.com/itchyny/timefmt-go v0.1.6 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.3 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
