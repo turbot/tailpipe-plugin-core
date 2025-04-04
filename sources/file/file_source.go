@@ -2,17 +2,19 @@ package file
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io/fs"
 	"log/slog"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/elastic/go-grok"
+
 	typehelpers "github.com/turbot/go-kit/types"
 	"github.com/turbot/pipe-fittings/v2/filter"
 	"github.com/turbot/tailpipe-plugin-sdk/artifact_source"
+	"github.com/turbot/tailpipe-plugin-sdk/context_values"
 	"github.com/turbot/tailpipe-plugin-sdk/row_source"
 	"github.com/turbot/tailpipe-plugin-sdk/types"
 )
@@ -44,6 +46,10 @@ func (s *FileSource) Identifier() string {
 }
 
 func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
+	executionId, err := context_values.ExecutionIdFromContext(ctx)
+	if err != nil {
+		return err
+	}
 	// TODO KAI BAD SOURCE CONFIG GIVES NO ERROR
 
 	// get the layout
@@ -57,12 +63,13 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 
 	g := grok.New()
 	// add any patterns defined in config
-	err := g.AddPatterns(s.Config.GetPatterns())
+	err = g.AddPatterns(s.Config.GetPatterns())
 	if err != nil {
+		// this is a fatal error, log and return it
+		slog.Error("FileSource.DiscoverArtifacts error adding grok patterns", "error", err)
 		return fmt.Errorf("error adding grok patterns: %v", err)
 	}
 
-	var errList []error
 	for _, basePath := range s.Config.Paths {
 		err := filepath.WalkDir(basePath, func(targetPath string, d fs.DirEntry, err error) error {
 			if err != nil {
@@ -71,14 +78,24 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 			return s.WalkNode(ctx, targetPath, basePath, optionalLayouts, d.IsDir(), g, filterMap)
 		})
 		if err != nil {
-			errList = append(errList, err)
-		}
+			// obtain error will be in format "op path: error"
+			errStr := err.Error()
 
+			// non-fatal error, log, notify and then attempt next path
+			slog.Error("FileSource.DiscoverArtifacts error walking file path", "path", basePath, "error", errStr)
+
+			// remove op from error string
+			parts := strings.Fields(errStr)
+			if len(parts) > 1 {
+				errStr = strings.Join(parts[1:], " ")
+			}
+
+			s.NotifyError(ctx, executionId, fmt.Errorf(errStr))
+			// reset err as handled
+			err = nil
+		}
 	}
-	if len(errList) > 0 {
-		slog.Error("FileSource.DiscoverArtifacts complete with errors", "errors", errList)
-		return errors.Join(errList...)
-	}
+
 	slog.Info("FileSource.DiscoverArtifacts complete")
 	return nil
 }
@@ -87,12 +104,23 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 func (s *FileSource) DownloadArtifact(ctx context.Context, info *types.ArtifactInfo) error {
 	// for file source, the local name is the same as the name
 	localName := info.Name
+	fileName := filepath.Base(localName)
+
+	// ensure file exists (this check can pass without error even if we cannot read the file)
 	fileInfo, err := os.Stat(localName)
 	if err != nil {
-		return fmt.Errorf("error getting file info for %s: %v", localName, err)
+		slog.Error("FileSource.DownloadArtifact error obtaining file info", "file", localName, "error", err)
+		return fmt.Errorf("%s: unable to obtain file info", fileName)
 	}
-	downloadInfo := types.NewDownloadedArtifactInfo(info, localName, fileInfo.Size())
+
+	// ensure we can read the file
+	f, err := os.Open(localName)
+	if err != nil {
+		slog.Error("FileSource.DownloadArtifact error opening file", "file", localName, "error", err)
+		return fmt.Errorf("%s: unable to open file", fileName)
+	}
+	f.Close()
 
 	// notify observers of the downloaded artifact
-	return s.OnArtifactDownloaded(ctx, downloadInfo)
+	return s.OnArtifactDownloaded(ctx, types.NewDownloadedArtifactInfo(info, localName, fileInfo.Size()))
 }
