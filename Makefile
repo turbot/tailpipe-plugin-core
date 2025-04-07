@@ -23,4 +23,4 @@ release:
 		-v `pwd`:/go/src/plugin \
 		-w /go/src/plugin \
 		ghcr.io/goreleaser/goreleaser-cross:${GOLANG_CROSS_VERSION} \
-		build --clean
+		release --clean --skip=publish --skip=validate
