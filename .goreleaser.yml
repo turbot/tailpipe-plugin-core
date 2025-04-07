@@ -32,6 +32,7 @@ builds:
       - GO111MODULE=on
       - GOPRIVATE=github.com/turbot
       - CC=aarch64-linux-gnu-gcc
+      - CXX=aarch64-linux-gnu-g++
     flags:
       - -tags=netgo
 
