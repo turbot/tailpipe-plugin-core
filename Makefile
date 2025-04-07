@@ -6,6 +6,8 @@ PLUGIN_BINARY = $(PLUGIN_DIR)/tailpipe-plugin-core.plugin
 VERSION_JSON = $(PLUGIN_DIR)/version.json
 VERSIONS_JSON = $(TAILPIPE_INSTALL_DIR)/plugins/versions.json
 
+GOLANG_CROSS_VERSION  ?= v1.23.2
+
 .PHONY: install
 install:
 	go build -o $(PLUGIN_BINARY) -tags "${BUILD_TAGS}" *.go
