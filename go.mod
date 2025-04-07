@@ -9,8 +9,8 @@ require (
 	github.com/elastic/go-grok v0.3.1
 	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/turbot/go-kit v1.2.0
-	github.com/turbot/pipe-fittings/v2 v2.3.0
-	github.com/turbot/tailpipe-plugin-sdk v0.2.1-rc.0
+	github.com/turbot/pipe-fittings/v2 v2.3.1
+	github.com/turbot/tailpipe-plugin-sdk v0.2.1-rc.2
 )
 
 require (
@@ -54,12 +54,12 @@ require (
 	github.com/danwakefield/fnmatch v0.0.0-20160403171240-cbb64ac3d964 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgraph-io/ristretto v0.2.0 // indirect
-	github.com/duckdb/duckdb-go-bindings v0.1.12 // indirect
-	github.com/duckdb/duckdb-go-bindings/darwin-amd64 v0.1.7 // indirect
-	github.com/duckdb/duckdb-go-bindings/darwin-arm64 v0.1.7 // indirect
-	github.com/duckdb/duckdb-go-bindings/linux-amd64 v0.1.7 // indirect
-	github.com/duckdb/duckdb-go-bindings/linux-arm64 v0.1.7 // indirect
-	github.com/duckdb/duckdb-go-bindings/windows-amd64 v0.1.7 // indirect
+	github.com/duckdb/duckdb-go-bindings v0.1.13 // indirect
+	github.com/duckdb/duckdb-go-bindings/darwin-amd64 v0.1.8 // indirect
+	github.com/duckdb/duckdb-go-bindings/darwin-arm64 v0.1.8 // indirect
+	github.com/duckdb/duckdb-go-bindings/linux-amd64 v0.1.8 // indirect
+	github.com/duckdb/duckdb-go-bindings/linux-arm64 v0.1.8 // indirect
+	github.com/duckdb/duckdb-go-bindings/windows-amd64 v0.1.8 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/fatih/color v1.17.0 // indirect
 	github.com/felixge/httpsnoop v1.0.4 // indirect
@@ -120,9 +120,9 @@ require (
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
 	github.com/magefile/mage v1.15.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
-	github.com/marcboeker/go-duckdb/arrowmapping v0.0.5 // indirect
-	github.com/marcboeker/go-duckdb/mapping v0.0.5 // indirect
-	github.com/marcboeker/go-duckdb/v2 v2.0.3 // indirect
+	github.com/marcboeker/go-duckdb/arrowmapping v0.0.6 // indirect
+	github.com/marcboeker/go-duckdb/mapping v0.0.6 // indirect
+	github.com/marcboeker/go-duckdb/v2 v2.1.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
