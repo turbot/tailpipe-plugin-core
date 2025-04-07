@@ -16,10 +16,6 @@ install:
 
 .PHONY: release
 release:
-	@if [ ! -f ".release-env" ]; then \
-		echo ".release-env is required for release";\
-		exit 1;\
-	fi
 	docker run \
 		--rm \
 		-e CGO_ENABLED=1 \
