@@ -4,24 +4,39 @@ before:
   hooks:
     - go mod tidy
 builds:
-  - id: "tailpipe"
+  - id: tailpipe-darwin-amd64
     binary: "{{ .ProjectName }}.plugin"
     goos:
-      - linux
       - darwin
     goarch:
       - amd64
-      - arm64
-    ignore:
-      - goos: linux
-        goarch: arm64
     env:
       - CGO_ENABLED=1
       - GO111MODULE=on
       - GOPRIVATE=github.com/turbot
+      - CC=o64-clang
+      - CXX=o64-clang++
     flags:
       - -tags=netgo
-  - id: "tailpipe-linux-arm64"
+    ldflags:
+      - -s -w
+  - id: tailpipe-darwin-arm64
+    binary: "{{ .ProjectName }}.plugin"
+    goos:
+      - darwin
+    goarch:
+      - arm64
+    env:
+      - CGO_ENABLED=1
+      - GO111MODULE=on
+      - GOPRIVATE=github.com/turbot
+      - CC=oa64-clang
+      - CXX=oa64-clang++
+    flags:
+      - -tags=netgo
+    ldflags:
+      - -s -w
+  - id: tailpipe-linux-arm64
     binary: "{{ .ProjectName }}.plugin"
     goos:
       - linux
@@ -33,6 +48,22 @@ builds:
       - GOPRIVATE=github.com/turbot
       - CC=aarch64-linux-gnu-gcc
       - CXX=aarch64-linux-gnu-g++
+    flags:
+      - -tags=netgo
+    ldflags:
+      - -s -w
+  - id: tailpipe-linux-amd64
+    binary: "{{ .ProjectName }}.plugin"
+    goos:
+      - linux
+    goarch:
+      - amd64
+    env:
+      - CGO_ENABLED=1
+      - GO111MODULE=on
+      - GOPRIVATE=github.com/turbot
+      - CC=x86_64-linux-gnu-gcc
+      - CXX=x86_64-linux-gnu-g++
     flags:
       - -tags=netgo
     ldflags:
