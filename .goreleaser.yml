@@ -35,6 +35,8 @@ builds:
       - CXX=aarch64-linux-gnu-g++
     flags:
       - -tags=netgo
+    ldflags:
+      - -s -w
 
 archives:
   - format: gz
