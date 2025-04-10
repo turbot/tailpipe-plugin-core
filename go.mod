@@ -2,6 +2,9 @@ module github.com/turbot/tailpipe-plugin-core
 
 go 1.24
 
+//github.com/turbot/pipe-fittings/v2 => ../pipe-fittings
+//replace github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
+
 require (
 	github.com/elastic/go-grok v0.3.1
 	github.com/hashicorp/hcl/v2 v2.20.1
