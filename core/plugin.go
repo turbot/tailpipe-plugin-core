@@ -28,6 +28,8 @@ func init() {
 	table.RegisterFormat[*sdkformats.Regex]()
 	table.RegisterFormat[*sdkformats.Delimited]()
 	table.RegisterFormat[*sdkformats.JsonLines]()
+	table.RegisterFormatPresets(sdkformats.DefaultJsonLines)
+	table.RegisterFormatPresets(sdkformats.DefaultDelimited)
 
 }
 
