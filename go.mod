@@ -2,8 +2,10 @@ module github.com/turbot/tailpipe-plugin-core
 
 go 1.24
 
-//github.com/turbot/pipe-fittings/v2 => ../pipe-fittings
-//replace github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
+replace (
+	github.com/turbot/pipe-fittings/v2 => ../pipe-fittings
+ 	github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
+ )
 
 require (
 	github.com/elastic/go-grok v0.3.1
