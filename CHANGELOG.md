@@ -1,4 +1,10 @@
-## v0.2.1 [2025-02-16]
+## v0.2.2 [2025-04-25]
+
+* Update tailpipe-plugin-sdk to v0.4.0
+    * Add WithHeaderRowNotification RowSourceOption, which can be set to enable a mapper to be notified of the header row of an artifact. ([#186](https://github.com/turbot/tailpipe-plugin-sdk/issues/186))
+    * Fix source file error for custom tables when using S3 or other external source. ([#188](https://github.com/turbot/tailpipe-plugin-sdk/issues/188))
+
+## v0.2.1 [2025-04-16]
 
 * Update pipe-fittings to v2.3.3    
   * Update auto_escape deprecation warning
@@ -9,7 +15,7 @@
   * Fix Column level `null_if` not being respected. ([#182](https://github.com/turbot/tailpipe-plugin-sdk/issues/182))
   * Fix missing required column is not being reported as a row error.  ([#181](https://github.com/turbot/tailpipe-plugin-sdk/issues/181))
 
-## v0.2.0 [2025-01-30]
+## v0.2.0 [2025-15-04]
 * Add support for custom tables
 * add support form custom formats
 * export `DefaultDelimited` and `DefaultJsonLines` format presets.
