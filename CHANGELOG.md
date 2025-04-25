@@ -1,26 +1,12 @@
-## v0.1.4 [2025-01-30]
+## v0.2.1 [2025-01-30]
+## v0.2.0 [2025-01-30]
+* Add support for custom tables
+ * add support form custom formats
+* export `DefaultDelimited` and `DefaultJsonLines` format presets.
+* Add metadata to run plugin in-process to print metadata. 
+* Update file source to allow for non-fatal errors. Closes #12 04/04/2025, 19:39
 
-Add metadata printing. 
-Replace GetSupportedFormats with GetDefaultFormat
-Update file source to allow for non-fatal errors. Closes #12 04/04/2025, 19:39
-export DefaultDelimited and DefaultJsonLines format presets.
-
-Add support for custom formats (#8)
-
-* Add GetSupportedFormat
-* Remove schema from mappers
-* 
-Add support for custom tables (#6)
-
-* Update to use go-kit v1.0.0
-* GetSourceMetadata returns error
-* formats moved to sdk
-* Return error from EnrichRow
-* Add support for predefined custom tables
-* Add Required to ColumnSchema, respect this in RowSchema.MapRow
-* remove proto.Table and CustomTableDef - instead add name to TableSchema (renamed fromRowSchema) and just use that
-* Split RegisterCustomTable into RegisterCustomTable and RegisterPredefinedCustomTable
-* 
+ 
 ### v0.1.2 [2025-01-30]
 * re-add DescribeSources
 
