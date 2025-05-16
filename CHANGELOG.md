@@ -1,3 +1,17 @@
+## v0.2.4 [2025-05-26]
+* Update tailpipe-plugin-sdk to v0.6.0
+  * Add support for zip artifact loaders. ([#195](https://github.com/turbot/tailpipe-plugin-sdk/issues/195))
+* Update pipe-fittings to v2.5.1
+  * Add `remain` to `HclTag`
+
+## v0.2.3 [2025-04-25]
+
+* Update tailpipe-plugin-sdk to v0.5.0-rc.2
+  * When describing a source, include all properties. ([#199](https://github.com/turbot/tailpipe-plugin-sdk/issues/199))
+  * Add support for enforcing size limits on temporary directory `max_temp_dir_mb` by limiting total JSONL disk usage. ([#192](https://github.com/turbot/tailpipe-plugin-sdk/issues/192))
+* Update pipe-fittings to v2.4.0-rc.5
+   * Add `plugin_memory_max_mb`, `memory_max_mb`, `temp_dir_max_mb` options to TailpipeWorkspaceProfile. Also add `TEMP_DIR_MAX_MB` env var and `temp-dir-max-mb` argument. ([#707](https://github.com/turbot/pipe-fittings/issues/707))
+
 ## v0.2.2 [2025-04-25]
 
 * Update tailpipe-plugin-sdk to v0.4.0

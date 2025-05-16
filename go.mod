@@ -8,8 +8,8 @@ require (
 	github.com/elastic/go-grok v0.3.1
 	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/turbot/go-kit v1.3.0
-	github.com/turbot/pipe-fittings/v2 v2.4.0-rc.5
-	github.com/turbot/tailpipe-plugin-sdk v0.5.0-rc.2
+	github.com/turbot/pipe-fittings/v2 v2.4.1
+	github.com/turbot/tailpipe-plugin-sdk v0.6.0
 )
 
 require (
@@ -144,6 +144,7 @@ require (
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
 	github.com/satyrius/gonx v1.4.0 // indirect
+	github.com/sethvargo/go-retry v0.3.0 // indirect
 	github.com/shiena/ansicolor v0.0.0-20230509054315-a9deabde6e02 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
