@@ -9,7 +9,7 @@ require (
 	github.com/hashicorp/hcl/v2 v2.20.1
 	github.com/turbot/go-kit v1.3.0
 	github.com/turbot/pipe-fittings/v2 v2.4.1
-	github.com/turbot/tailpipe-plugin-sdk v0.6.0
+	github.com/turbot/tailpipe-plugin-sdk v0.6.1
 )
 
 require (
