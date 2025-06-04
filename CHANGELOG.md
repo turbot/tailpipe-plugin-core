@@ -1,3 +1,7 @@
+## v0.2.6 [2025-06-04]
+
+- Recompiled plugin with [tailpipe-plugin-sdk v0.7.1](https://github.com/turbot/tailpipe-plugin-sdk/blob/develop/CHANGELOG.md#v071-2025-06-04) that fixes an issue affecting collections using a file source. ([#36](https://github.com/turbot/tailpipe-plugin-core/pull/36))
+
 ## v0.2.5 [2025-05-19]
 * Update tailpipe-plugin-sdk to v0.6.1.
   * Update checkJsonlSize to skip check if no min size is set. ([#204](https://github.com/turbot/tailpipe-plugin-sdk/issues/204))
