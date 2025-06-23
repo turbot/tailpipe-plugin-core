@@ -2,7 +2,7 @@ module github.com/turbot/tailpipe-plugin-core
 
 go 1.24
 
-//replace github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
+replace github.com/turbot/tailpipe-plugin-sdk => ../tailpipe-plugin-sdk
 
 require (
 	github.com/elastic/go-grok v0.3.1
@@ -112,7 +112,7 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
 	github.com/karrick/gows v0.3.0 // indirect
-	github.com/klauspost/compress v1.17.11 // indirect
+	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.9 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/logrusorgru/aurora v2.0.3+incompatible // indirect
