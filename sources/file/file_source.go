@@ -2,6 +2,7 @@ package file
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -90,7 +91,7 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 				errStr = strings.Join(parts[1:], " ")
 			}
 
-			s.NotifyError(ctx, executionId, fmt.Errorf(errStr))
+			s.NotifyError(ctx, executionId, errors.New(errStr))
 			// reset err as handled
 			err = nil
 		}
