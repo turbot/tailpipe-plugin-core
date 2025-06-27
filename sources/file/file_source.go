@@ -72,6 +72,7 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 	}
 
 	for _, basePath := range s.Config.Paths {
+		// TODO #CS we need a mechanism to stop walking when weh have reached the 'To' time
 		err := filepath.WalkDir(basePath, func(targetPath string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
