@@ -2,6 +2,7 @@ package file
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io/fs"
 	"log/slog"
@@ -50,7 +51,7 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	// TODO KAI BAD SOURCE CONFIG GIVES NO ERROR
+	// TODO Bad source config gives no errors https://github.com/turbot/tailpipe-plugin-sdk/issues/244
 
 	// get the layout
 	layout := typehelpers.SafeString(s.Config.FileLayout)
@@ -71,6 +72,7 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 	}
 
 	for _, basePath := range s.Config.Paths {
+		// TODO we need a mechanism to stop walking when weh have reached the 'To' time https://github.com/turbot/tailpipe-plugin-sdk/issues/243
 		err := filepath.WalkDir(basePath, func(targetPath string, d fs.DirEntry, err error) error {
 			if err != nil {
 				return err
@@ -90,7 +92,7 @@ func (s *FileSource) DiscoverArtifacts(ctx context.Context) error {
 				errStr = strings.Join(parts[1:], " ")
 			}
 
-			s.NotifyError(ctx, executionId, fmt.Errorf(errStr))
+			s.NotifyError(ctx, executionId, errors.New(errStr))
 			// reset err as handled
 			err = nil
 		}
