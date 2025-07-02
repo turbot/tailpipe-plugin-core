@@ -1,6 +1,6 @@
-## v0.2.8 [tbd]
+## v0.2.8 [2025-07-02]
 
-- Recompiled plugin with [tailpipe-plugin-sdk v0.9.0](https://github.com/turbot/tailpipe-plugin-sdk/blob/develop/CHANGELOG.md#v071-2025-06-04) 
+- Recompiled plugin with [tailpipe-plugin-sdk v0.9.0](https://github.com/turbot/tailpipe-plugin-sdk/blob/develop/CHANGELOG.md#v071-2025-07-02) 
 
 ## v0.2.7 [2025-06-05]
 
