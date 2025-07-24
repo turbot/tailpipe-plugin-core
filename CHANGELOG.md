@@ -1,3 +1,6 @@
+## v0.2.10 [2025-07-24]
+* Recompiled plugin with [tailpipe-plugin-sdk v0.9.2](https://github.com/turbot/tailpipe-plugin-sdk/blob/develop/CHANGELOG.md#v092-2025-07-24) that fixes incorrect collection boundaries for zero-granularity data and a crash caused by null trunk states in the collection state. Also includes a security upgrade to the `oauth2` dependency.
+
 ## v0.2.9 [2025-07-02]
 * Recompiled plugin with [tailpipe-plugin-sdk v0.9.1](https://github.com/turbot/tailpipe-plugin-sdk/blob/develop/CHANGELOG.md#v071-2025-07-02) 
 
